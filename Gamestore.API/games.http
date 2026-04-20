@@ -1,0 +1,31 @@
+GET http://localhost:5129/games
+
+###
+GET  http://localhost:5129/games/3
+
+###
+POST http://localhost:5129/games
+Content-Type: application/json
+
+{
+  "name": "Test Game",
+  "genreId": 1,
+  "price": 39.49,
+  "releaseDate": "2016-08-20",
+  "studio": "Test Games"
+}
+
+###
+PUT http://localhost:5129/games/1
+Content-Type: application/json
+
+  {
+  "name": "No Mans Sky VR",
+  "genreId": 1,
+  "price": 49.49,
+  "releaseDate": "2016-08-20",
+  "studio": "Hello Games"
+  }
+
+###
+DELETE http://localhost:5129/games/3
