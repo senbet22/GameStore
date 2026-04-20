@@ -1,49 +1,94 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import GenresList from "./components/GenresList";
 import AddGameForm from "./components/AddGameForm";
-
-interface Game {
-  id: number;
-  name: string;
-  genre: string;
-  price: number;
-  releaseDate: string;
-  studio: string;
-}
+import type { Game, Genre } from "./types";
+import { API_BASE } from "./constants";
 
 function App() {
   const [games, setGames] = useState<Game[]>([]);
+  const [genres, setGenres] = useState<Genre[]>([]);
+  const [gamesError, setGamesError] = useState(false);
+  const [genresError, setGenresError] = useState(false);
+
+  const refreshGames = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/games`);
+      setGames(await response.json());
+    } catch {
+      setGamesError(true);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchGames = async () => {
       try {
-        const response = await fetch("http://localhost:5129/games");
-        const data = await response.json();
-        setGames(data);
-      } catch (error) {
-        console.error("Fetch error:", error);
+        const response = await fetch(`${API_BASE}/games`);
+        setGames(await response.json());
+      } catch {
+        setGamesError(true);
       }
     };
 
-    fetchData();
+    const fetchGenres = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/genres`);
+        setGenres(await response.json());
+      } catch {
+        setGenresError(true);
+      }
+    };
+
+    fetchGames();
+    fetchGenres();
   }, []);
 
   return (
     <div>
-      <h1>Game Store</h1>
-      <AddGameForm />
-      <div>
-        <h2>Games</h2>
-        <ul>
-          {games.map((game) => (
-            <li key={game.id}>
-              {game.name} - {game.genre} - ${game.price}
-            </li>
-          ))}
-        </ul>
+      <div className="app-header">
+        <h1>Game Store</h1>
+        <p>Manage your game catalog</p>
       </div>
-      <GenresList />
+
+      <div className="card">
+        <h2>Add Game</h2>
+        <AddGameForm
+          genres={genres}
+          genresError={genresError}
+          onGameAdded={refreshGames}
+        />
+      </div>
+
+      <div className="card">
+        <h2>Games ({games.length})</h2>
+        {gamesError ? (
+          <p className="empty-state">Could not load games. Is the API running?</p>
+        ) : games.length === 0 ? (
+          <p className="empty-state">No games yet. Add one above.</p>
+        ) : (
+          <table className="games-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Genre</th>
+                <th>Studio</th>
+                <th>Release Date</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {games.map((game) => (
+                <tr key={game.id}>
+                  <td>{game.name}</td>
+                  <td>{game.genre}</td>
+                  <td>{game.studio}</td>
+                  <td>{new Date(game.releaseDate).toLocaleDateString()}</td>
+                  <td className="price-cell">${game.price.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }
