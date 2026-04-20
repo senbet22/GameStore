@@ -87,7 +87,7 @@ function App() {
                   <th>Studio</th>
                   <th>Release Date</th>
                   <th>Price</th>
-                  <th></th>
+                  <th scope="col"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
               <tbody>
