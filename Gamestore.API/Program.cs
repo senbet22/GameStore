@@ -1,6 +1,5 @@
 using Gamestore.API.Data;
 using Gamestore.API.Endpoints;
-using Gamestore.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,15 +7,16 @@ builder.Services.AddValidation();
 
 builder.AddGameStoreDb();
 
+var allowedOrigins = builder.Configuration
+    .GetSection("AllowedOrigins")
+    .Get<string[]>() ?? ["http://localhost:3000", "http://localhost:5173"];
+
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:3000", "http://localhost:5173")
-                                .AllowAnyHeader()
-                                .AllowAnyMethod();
-        });
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod());
 });
 
 var app = builder.Build();
@@ -28,4 +28,5 @@ app.MapGenresEndpoints();
 
 app.MigrateDb();
 
-app.Run();
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5129";
+app.Run($"http://0.0.0.0:{port}");
