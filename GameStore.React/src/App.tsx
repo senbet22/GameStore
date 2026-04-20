@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import AddGameForm from "./components/AddGameForm";
+import ConfirmModal from "./components/ConfirmModal";
 import type { Game, Genre } from "./types";
 import { API_BASE } from "./constants";
 
@@ -9,6 +10,7 @@ function App() {
   const [genres, setGenres] = useState<Genre[]>([]);
   const [gamesError, setGamesError] = useState(false);
   const [genresError, setGenresError] = useState(false);
+  const [deletingGame, setDeletingGame] = useState<Game | null>(null);
 
   const refreshGames = async () => {
     try {
@@ -42,6 +44,17 @@ function App() {
     fetchGenres();
   }, []);
 
+  const handleDeleteConfirm = async () => {
+    if (!deletingGame) return;
+    try {
+      await fetch(`${API_BASE}/games/${deletingGame.id}`, { method: "DELETE" });
+      setDeletingGame(null);
+      refreshGames();
+    } catch {
+      console.error("Failed to delete game.");
+    }
+  };
+
   return (
     <div>
       <div className="app-header">
@@ -73,6 +86,7 @@ function App() {
                 <th>Studio</th>
                 <th>Release Date</th>
                 <th>Price</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -83,12 +97,28 @@ function App() {
                   <td>{game.studio}</td>
                   <td>{new Date(game.releaseDate).toLocaleDateString()}</td>
                   <td className="price-cell">${game.price.toFixed(2)}</td>
+                  <td>
+                    <button
+                      className="btn-delete-row"
+                      onClick={() => setDeletingGame(game)}
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
+
+      {deletingGame && (
+        <ConfirmModal
+          message={`Delete "${deletingGame.name}"?`}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setDeletingGame(null)}
+        />
+      )}
     </div>
   );
 }
