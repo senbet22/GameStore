@@ -16,6 +16,7 @@ function App() {
     try {
       const response = await fetch(`${API_BASE}/games`);
       setGames(await response.json());
+      setGamesError(false);
     } catch {
       setGamesError(true);
     }
