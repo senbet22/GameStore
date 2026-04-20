@@ -255,6 +255,70 @@ button[type="submit"]:hover {
   }
 }
 
+/* Date picker */
+.date-toggle {
+  background-color: #0f0f13;
+  border: 1px solid #2a2a38;
+  border-radius: 6px;
+  padding: 0.55rem 0.75rem;
+  color: #e2e2e2;
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  transition: border-color 0.2s;
+  color-scheme: dark;
+}
+
+.date-toggle:hover {
+  border-color: #6366f1;
+}
+
+.date-toggle:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+.date-field {
+  position: relative;
+}
+
+.date-picker-popup {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  background-color: #1a1a24;
+  border: 1px solid #2a2a38;
+  border-radius: 10px;
+  padding: 0.5rem;
+}
+
+.date-picker-popup select {
+  background-color: #0f0f13;
+  border: 1px solid #2a2a38;
+  color: #e2e2e2;
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  color-scheme: dark;
+}
+
+/* react-day-picker dark theme overrides */
+.date-picker-popup .rdp-root {
+  --rdp-accent-color: #6366f1;
+  --rdp-accent-background-color: #2a2a4a;
+  color: #e2e2e2;
+}
+
+.date-picker-popup .rdp-day_button {
+  color: #e2e2e2;
+}
+
+.date-picker-popup .rdp-chevron {
+  fill: #e2e2e2;
+}
+
+
 /* Delete row button */
 .btn-delete-row {
   background: none;

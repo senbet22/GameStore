@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/style.css";
 import type { Genre } from "../types";
 import { API_BASE } from "../constants";
 
@@ -16,13 +18,29 @@ interface FormErrors {
   general?: string;
 }
 
+function toApiDate(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
 function AddGameForm({ genres, genresError, onGameAdded }: Props) {
   const [name, setName] = useState("");
   const [genreId, setGenreId] = useState("");
   const [price, setPrice] = useState("");
-  const [releaseDate, setReleaseDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [showPicker, setShowPicker] = useState(false);
   const [studio, setStudio] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
+  const pickerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+        setShowPicker(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const clearError = (field: keyof FormErrors) =>
     setErrors((prev) => ({ ...prev, [field]: undefined }));
@@ -31,7 +49,13 @@ function AddGameForm({ genres, genresError, onGameAdded }: Props) {
     event.preventDefault();
     setErrors({});
 
+    if (!selectedDate) {
+      setErrors({ general: "Please select a release date." });
+      return;
+    }
+
     try {
+
       const response = await fetch(`${API_BASE}/games`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -39,7 +63,7 @@ function AddGameForm({ genres, genresError, onGameAdded }: Props) {
           name,
           genreId: parseInt(genreId),
           price: parseFloat(price),
-          releaseDate,
+          releaseDate: toApiDate(selectedDate),
           studio,
         }),
       });
@@ -48,7 +72,7 @@ function AddGameForm({ genres, genresError, onGameAdded }: Props) {
         setName("");
         setGenreId("");
         setPrice("");
-        setReleaseDate("");
+        setSelectedDate(undefined);
         setStudio("");
         onGameAdded();
       } else if (response.status === 400) {
@@ -69,7 +93,7 @@ function AddGameForm({ genres, genresError, onGameAdded }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
+    <form onSubmit={handleSubmit}>
       <div className="form-grid">
         <div className="form-field">
           <label htmlFor="name">Name</label>
@@ -130,17 +154,6 @@ function AddGameForm({ genres, genresError, onGameAdded }: Props) {
         </div>
 
         <div className="form-field">
-          <label htmlFor="releaseDate">Release Date</label>
-          <input
-            id="releaseDate"
-            type="date"
-            value={releaseDate}
-            onChange={(e) => setReleaseDate(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="form-field">
           <label htmlFor="studio">Studio</label>
           <input
             id="studio"
@@ -153,6 +166,34 @@ function AddGameForm({ genres, genresError, onGameAdded }: Props) {
             required
           />
           {errors.studio && <span id="studio-error" className="field-error" role="alert">{errors.studio}</span>}
+        </div>
+
+        <div className="form-field date-field" ref={pickerRef}>
+          <label htmlFor="release-date-btn">Release Date</label>
+          <button
+            id="release-date-btn"
+            type="button"
+            className="date-toggle"
+            onClick={() => setShowPicker((v) => !v)}
+            aria-expanded={showPicker}
+            aria-haspopup="dialog"
+          >
+            {selectedDate
+              ? selectedDate.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+              : "Select a date"}
+          </button>
+          {showPicker && (
+            <div className="date-picker-popup" role="dialog" aria-label="Date picker">
+              <DayPicker
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => { setSelectedDate(date); setShowPicker(false); }}
+                captionLayout="dropdown"
+                startMonth={new Date(1970, 0)}
+                endMonth={new Date(new Date().getFullYear() + 5, 11)}
+              />
+            </div>
+          )}
         </div>
       </div>
 
