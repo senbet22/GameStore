@@ -7,9 +7,9 @@ builder.Services.AddValidation();
 
 builder.AddGameStoreDb();
 
-var allowedOrigins = builder.Configuration
-    .GetSection("AllowedOrigins")
-    .Get<string[]>() ?? ["http://localhost:3000", "http://localhost:5173"];
+var allowedOrigins = builder.Configuration["ALLOWED_ORIGINS"]
+    ?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    ?? ["http://localhost:3000", "http://localhost:5173"];
 
 builder.Services.AddCors(options =>
 {
