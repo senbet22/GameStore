@@ -78,37 +78,40 @@ function App() {
         ) : games.length === 0 ? (
           <p className="empty-state">No games yet. Add one above.</p>
         ) : (
-          <table className="games-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Genre</th>
-                <th>Studio</th>
-                <th>Release Date</th>
-                <th>Price</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {games.map((game) => (
-                <tr key={game.id}>
-                  <td>{game.name}</td>
-                  <td>{game.genre}</td>
-                  <td>{game.studio}</td>
-                  <td>{new Date(game.releaseDate).toLocaleDateString()}</td>
-                  <td className="price-cell">${game.price.toFixed(2)}</td>
-                  <td>
-                    <button
-                      className="btn-delete-row"
-                      onClick={() => setDeletingGame(game)}
-                    >
-                      Delete
-                    </button>
-                  </td>
+          <div className="table-wrapper">
+            <table className="games-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Genre</th>
+                  <th>Studio</th>
+                  <th>Release Date</th>
+                  <th>Price</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {games.map((game) => (
+                  <tr key={game.id}>
+                    <td data-label="Name">{game.name}</td>
+                    <td data-label="Genre">{game.genre}</td>
+                    <td data-label="Studio">{game.studio}</td>
+                    <td data-label="Release Date">{new Date(game.releaseDate).toLocaleDateString()}</td>
+                    <td data-label="Price" className="price-cell">${game.price.toFixed(2)}</td>
+                    <td data-label="">
+                      <button
+                        className="btn-delete-row"
+                        aria-label={`Delete ${game.name}`}
+                        onClick={() => setDeletingGame(game)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 

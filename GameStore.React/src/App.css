@@ -31,7 +31,7 @@ body {
 
 .app-header p {
   margin-top: 0.25rem;
-  color: #888;
+  color: #aaa;
   font-size: 0.9rem;
 }
 
@@ -87,8 +87,10 @@ h2 {
   color-scheme: dark;
 }
 
-.form-field input:focus,
-.form-field select:focus {
+.form-field input:focus-visible,
+.form-field select:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
   border-color: #6366f1;
 }
 
@@ -139,7 +141,7 @@ button[type="submit"]:hover {
 .games-table th {
   text-align: left;
   padding: 0.6rem 0.75rem;
-  color: #666;
+  color: #999;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.6px;
@@ -168,8 +170,76 @@ button[type="submit"]:hover {
 .empty-state {
   text-align: center;
   padding: 2rem;
-  color: #555;
+  color: #888;
   font-size: 0.9rem;
+}
+
+/* Table scroll on mobile */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  #root {
+    padding: 1.25rem 1rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 1.25rem;
+  }
+
+  .modal {
+    margin: 1rem;
+  }
+
+  /* Table → card layout on mobile */
+  .table-wrapper {
+    overflow-x: unset;
+  }
+
+  .games-table thead {
+    display: none;
+  }
+
+  .games-table tr {
+    display: block;
+    border: 1px solid #2a2a38;
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .games-table tr:hover td {
+    background-color: transparent;
+  }
+
+  .games-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 0;
+    border: none;
+    font-size: 0.9rem;
+  }
+
+  .games-table td::before {
+    content: attr(data-label);
+    color: #888;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    margin-right: 1rem;
+  }
+
+  .games-table tr:last-child td {
+    border-bottom: none;
+  }
 }
 
 /* Delete row button */
