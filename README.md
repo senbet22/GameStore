@@ -1,5 +1,7 @@
 # Game Store
 
+**Live demo:** [gamestore-senbet.netlify.app](https://gamestore-senbet.netlify.app)
+
 A full-stack web app to manage a game catalog. You can add and delete games, pick a genre, and see everything in a clean list.
 
 **Backend:** ASP.NET Core (.NET 10) — minimal API with Entity Framework Core and SQLite  
@@ -59,6 +61,15 @@ The app will be available at `http://localhost:5173`.
 | PUT | `/games/{id}` | Update a game |
 | DELETE | `/games/{id}` | Delete a game |
 | GET | `/genres` | Get all genres |
+
+---
+
+## Deployment
+
+- **Frontend** hosted on [Netlify](https://netlify.com)
+- **Backend** hosted on [Railway](https://railway.app)
+- Environment-based API URL switching via Vite `.env` files
+- CORS origins configured via `ALLOWED_ORIGINS` environment variable on Railway
 
 ---
 
